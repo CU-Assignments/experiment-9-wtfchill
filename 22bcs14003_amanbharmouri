@@ -1,0 +1,145 @@
+import java.util.*;
+import java.math.BigDecimal;
+
+// Problem 1: Match Found
+public class MatchFound {
+    public static String matchFound(String input1, String input2) {
+        String pattern = input1.replace("_", ".");
+        String[] words = input2.split(":");
+        List<String> matchedWords = new ArrayList<>();
+        for (String word : words) {
+            if (word.matches(pattern)) matchedWords.add(word.toUpperCase());
+        }
+        return String.join(":", matchedWords);
+    }
+}
+
+// Problem 2: Encoding Three Strings
+class EncodeStrings {
+    public static String[] encode(String s1, String s2, String s3) {
+        String[] parts1 = splitString(s1);
+        String[] parts2 = splitString(s2);
+        String[] parts3 = splitString(s3);
+        String output1 = parts1[0] + parts2[1] + parts3[2];
+        String output2 = parts1[1] + parts2[2] + parts3[0];
+        String output3 = toggleCase(parts1[2] + parts2[0] + parts3[1]);
+        return new String[]{output1, output2, output3};
+    }
+    private static String[] splitString(String str) {
+        int len = str.length();
+        int part = len / 3;
+        int mod = len % 3;
+        int first = part + (mod == 2 ? 1 : 0);
+        int second = part + (mod == 1 ? 1 : 0);
+        return new String[]{str.substring(0, first), str.substring(first, first + second), str.substring(first + second)};
+    }
+    private static String toggleCase(String str) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : str.toCharArray()) {
+            sb.append(Character.isUpperCase(c) ? Character.toLowerCase(c) : Character.toUpperCase(c));
+        }
+        return sb.toString();
+    }
+}
+
+// Problem 3: Alphabet Encoding
+class AlphabetEncoding {
+    public static String encodeString(String input) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < input.length() - 1; i++) {
+            char a = input.charAt(i), b = input.charAt(i + 1);
+            if (Character.isLetter(a) && Character.isLetter(b)) {
+                int sum = (Character.toLowerCase(a) - 'a' + 1) + (Character.toLowerCase(b) - 'a' + 1);
+                result.append(a).append(sum % 26 == 0 ? "0" : (char) ('a' + (sum % 26 - 1)));
+            } else {
+                result.append(a);
+            }
+        }
+        result.append(input.charAt(input.length() - 1));
+        return result.toString().toLowerCase();
+    }
+}
+
+// Problem 4: Find Added Letter
+class FindExtraLetter {
+    public static char findAddedLetter(String s, String t) {
+        int sum = 0;
+        for (char c : t.toCharArray()) sum += c;
+        for (char c : s.toCharArray()) sum -= c;
+        return (char) sum;
+    }
+}
+
+// Problem 5: Next Greater Element
+class NextGreaterElement {
+    public static int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        Map<Integer, Integer> map = new HashMap<>();
+        Stack<Integer> stack = new Stack<>();
+        for (int num : nums2) {
+            while (!stack.isEmpty() && stack.peek() < num) map.put(stack.pop(), num);
+            stack.push(num);
+        }
+        for (int i = 0; i < nums1.length; i++) nums1[i] = map.getOrDefault(nums1[i], -1);
+        return nums1;
+    }
+}
+
+// Problem 6: Balanced Parentheses
+class BalancedParentheses {
+    public static boolean isBalanced(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (char c : s.toCharArray()) {
+            if (c == '(' || c == '{' || c == '[') stack.push(c);
+            else if (!stack.isEmpty() && "(){}[]".contains(stack.peek() + "" + c)) stack.pop();
+            else return false;
+        }
+        return stack.isEmpty();
+    }
+}
+
+// Problem 7: Comparator for Sorting Players
+class Player {
+    String name;
+    int score;
+    Player(String name, int score) { this.name = name; this.score = score; }
+}
+class Checker implements Comparator<Player> {
+    public int compare(Player a, Player b) {
+        return b.score != a.score ? Integer.compare(b.score, a.score) : a.name.compareTo(b.name);
+    }
+}
+
+// Problem 8: BigDecimal Sorting
+class BigDecimalSorting {
+    public static void sortBigDecimals(String[] numbers) {
+        Arrays.sort(numbers, (a, b) -> new BigDecimal(b).compareTo(new BigDecimal(a)));
+    }
+}
+
+// Problem 9: Wildcard Pattern Matching
+class WildcardMatching {
+    public static boolean isMatch(String s, String p) {
+        boolean[][] dp = new boolean[s.length() + 1][p.length() + 1];
+        dp[0][0] = true;
+        for (int j = 1; j <= p.length(); j++) dp[0][j] = p.charAt(j - 1) == '*' && dp[0][j - 1];
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = 1; j <= p.length(); j++) {
+                if (p.charAt(j - 1) == '?' || s.charAt(i - 1) == p.charAt(j - 1)) dp[i][j] = dp[i - 1][j - 1];
+                else if (p.charAt(j - 1) == '*') dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+            }
+        }
+        return dp[s.length()][p.length()];
+    }
+}
+
+// Problem 10: Find Target Range
+class SearchRange {
+    public static int[] searchRange(int[] nums, int target) {
+        int left = Arrays.binarySearch(nums, target);
+        if (left < 0) return new int[]{-1, -1};
+        int right = left;
+        while (left > 0 && nums[left - 1] == target) left--;
+        while (right < nums.length - 1 && nums[right + 1] == target) right++;
+        return new int[]{left, right};
+    }
+}
